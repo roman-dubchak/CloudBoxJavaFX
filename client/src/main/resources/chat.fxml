@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="640.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+    <VBox prefHeight="640.0" prefWidth="480.0">
+        <ListView fx:id="listView" prefHeight="642.0" prefWidth="480.0"/>
+        <HBox prefHeight="100.0" prefWidth="200.0">
+            <TextField onAction="#sendMessage" fx:id="txt" prefHeight="49.0" prefWidth="418.0"/>
+            <Button onAction="#sendMessage" mnemonicParsing="false" prefHeight="76.0" prefWidth="78.0" text="SEND"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
