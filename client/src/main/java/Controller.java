@@ -22,11 +22,15 @@ public class Controller implements Initializable {
     private DataInputStream in;
     private DataOutputStream out;
 
-    public void sendMessage(ActionEvent event) throws IOException {
+    public void sendFile(ActionEvent event) throws IOException {
         String text = txt.getText();
         out.writeUTF(text);
         out.flush();
         txt.clear();
+    }
+
+    public void downloadFile(ActionEvent event) throws IOException {
+
     }
 
     private void initStreams() throws IOException {
