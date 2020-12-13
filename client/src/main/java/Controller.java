@@ -1,8 +1,4 @@
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -22,15 +18,11 @@ public class Controller implements Initializable {
     private DataInputStream in;
     private DataOutputStream out;
 
-    public void sendFile(ActionEvent event) throws IOException {
+    public void sendMessage(ActionEvent event) throws IOException {
         String text = txt.getText();
         out.writeUTF(text);
         out.flush();
         txt.clear();
-    }
-
-    public void downloadFile(ActionEvent event) throws IOException {
-
     }
 
     private void initStreams() throws IOException {
