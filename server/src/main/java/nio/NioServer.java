@@ -76,7 +76,7 @@ public class NioServer {
                 // TODO: 11.12.2020  вывести содержимое файла
                 String fileName = message.split(" +")[1];
                 if (Files.exists(Path.of(path, fileName))){
-                    // прочитать файл в канал
+                    // прочитать файл, пока не учитывал размеры файла
                     byte[] byteBuffer = Files.readAllBytes(Path.of(path, fileName));
                     // записать файл в канал
                     channel.write(ByteBuffer.wrap(byteBuffer));
