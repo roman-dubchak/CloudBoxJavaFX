@@ -67,8 +67,13 @@ public class NioServer {
             String message = msg.toString().trim();
 
             if (message.equals("--list")) {
-                channel.write(ByteBuffer.wrap("cd\n\rmkdir\n\rtouch\n\rls\n\rwrite\n\r".getBytes(StandardCharsets.UTF_8)));
-            } else if (message.equals("cat")) {
+                channel.write(ByteBuffer.wrap(("cd - перейти на папку выше\n\r" +
+                                                "mkdir - создать папку\n\r" +
+                                                "touch - созадть файл\n\r" +
+                                                "ls - показать список файлов\n\r" +
+                                                "write - записать в файл\n\r" +
+                                                "cat - вывести содержимое файла\n\r").getBytes(StandardCharsets.UTF_8)));
+            } else if (message.equals("cat ")) {
                 // TODO: 11.12.2020  вывести содержимое файла
             } else if (message.startsWith("touch ")) {
                 // TODO: 11.12.2020 создать файл
