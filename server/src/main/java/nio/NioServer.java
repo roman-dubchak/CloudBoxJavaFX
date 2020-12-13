@@ -65,23 +65,33 @@ public class NioServer {
             System.out.println("Received: " + msg);
             buffer.clear();
             String message = msg.toString().trim();
-
             if (message.equals("--list")) {
                 channel.write(ByteBuffer.wrap(("cd - перейти на папку выше\n\r" +
-                                                "mkdir - создать папку\n\r" +
-                                                "touch - созадть файл\n\r" +
+                                                "mkdir - создать папку, mkdir dirname\n\r" +
+                                                "touch - созадть файл, touch filename\n\r" +
                                                 "ls - показать список файлов\n\r" +
                                                 "write - записать в файл\n\r" +
-                                                "cat - вывести содержимое файла\n\r").getBytes(StandardCharsets.UTF_8)));
-            } else if (message.equals("cat ")) {
+                                                "cat - вывести содержимое файла, cat filename\n\r").getBytes(StandardCharsets.UTF_8)));
+            } else if (message.startsWith("cat ")) {
                 // TODO: 11.12.2020  вывести содержимое файла
+                String fileName = message.split(" +")[1];
+                if (Files.exists(Path.of(path, fileName))){
+                    // прочитать файл в канал
+                    byte[] byteBuffer = Files.readAllBytes(Path.of(path, fileName));
+                    // записать файл в канал
+                    channel.write(ByteBuffer.wrap(byteBuffer));
+                }
             } else if (message.startsWith("touch ")) {
                 // TODO: 11.12.2020 создать файл
+                String fileName = message.split(" +")[1];
+                if (Files.notExists(Path.of(path, fileName))){
+                    Files.createFile(Path.of(path, fileName));
+                }
             } else if (message.equals("ls")) {
                 String info = Files.list(Path.of(path))
                         .map(p -> p.getFileName().toString())
                         .collect(Collectors.joining(", "));
-                info += "\n";
+                info += "\n\r";
                 channel.write(ByteBuffer.wrap(info.getBytes(StandardCharsets.UTF_8)));
             } else if (message.startsWith("mkdir ")) {
                 String dirName = message.split(" +")[1];
