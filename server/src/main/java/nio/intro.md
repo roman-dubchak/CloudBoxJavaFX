@@ -7,7 +7,7 @@
 --fileSystem
    
 ДЗ:
-echo 
+echo
 cat
 cd
 touch

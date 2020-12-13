@@ -1,3 +1,7 @@
 1. Чем нас не устроил Path.get?
 используем Path.of (11 jdk)
 2. Из под Винды не обрабатывает команды (по символам отправляет запросы - https://monosnap.com/list/5fd632fb94280545ea674c9b)
+3. Напомните плиз еще раз зачем мы прибавляем 255 и делим на 256
+byte[] buffer = new byte[255];
+        FileInputStream fis = new FileInputStream(file);
+        for (int i = 0; i < (size + 255) / 256; i++)
