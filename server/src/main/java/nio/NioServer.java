@@ -21,6 +21,7 @@ public class NioServer {
 
     private final ByteBuffer buffer = ByteBuffer.allocate(256);
     private String path = "server/serverFiles";
+    private String pathUpDir = "";
     private ServerSocketChannel serverChannel;
     private Selector selector;
 
@@ -101,7 +102,26 @@ public class NioServer {
                 channel.write(ByteBuffer.wrap(echoMsg));
             } else if (message.equals("cd")) {
                 // TODO: 11.12.2020 переместиться на деректорию выше
-                Stream<Path> path2 = Files.walk(Path.of(path), 1, FileVisitOption.FOLLOW_LINKS);
+                if(Files.isDirectory(Path.of(path))) {
+//                    Вариант 2 со сплитом строки path
+//                    String[] pathDirArr = path.split("/");
+//                    for (int i = 0; i < pathDirArr.length - 1; i++) {
+//                        if ((pathDirArr.length - i) > 2) {
+//                            pathUpDir = pathUpDir + pathDirArr[i] + "/";
+//                        } else pathUpDir = pathUpDir + pathDirArr[i];
+//                    }
+//                    System.out.println("Parent path is " + pathUpDir);
+//                }
+//                if (Files.isDirectory(Path.of(pathUpDir))){
+//                    path = pathUpDir;
+//                    System.out.println("New path is " + path);
+//                }
+                    Path pathDir = Path.of(path);
+                    if (Files.isDirectory(pathDir)) {
+                        path = pathDir.getParent().toString();
+                        System.out.println("New path is " + path);
+                    }
+                }
             } else if (message.equals("ls")) {
                 String info = Files.list(Path.of(path))
                         .map(p -> p.getFileName().toString())
