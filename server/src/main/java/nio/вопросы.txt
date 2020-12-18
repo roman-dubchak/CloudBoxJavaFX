@@ -4,4 +4,4 @@
 3. Напомните плиз еще раз зачем мы прибавляем 255 и делим на 256
 byte[] buffer = new byte[255];
         FileInputStream fis = new FileInputStream(file);
-        for (int i = 0; i < (size + 255) / 256; i++)
+        for (int i = 0;  < (size + 255) / 256; i++) git

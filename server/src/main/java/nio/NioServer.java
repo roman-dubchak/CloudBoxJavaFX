@@ -76,7 +76,8 @@ public class NioServer {
                                                 "ls - показать список файлов\n\r" +
                                                 "write - записать в файл\n\r" +
                                                 "echo - эхо, echo message\n\r" +
-                                                "cat - вывести содержимое файла, cat filename\n\r").getBytes(StandardCharsets.UTF_8)));
+                                                "cat - вывести содержимое файла, cat filename\n\r")
+                                                .getBytes(StandardCharsets.UTF_8)));
             } else if (message.startsWith("cat ")) {
                 // TODO: 11.12.2020  вывести содержимое файла
                 String fileName = message.split(" +")[1];
