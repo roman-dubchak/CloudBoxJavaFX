@@ -57,4 +57,19 @@ public class Controller implements Initializable {
 //            }
 //        });
     }
+
+    public void download(ActionEvent actionEvent) {
+
+    }
+
+    public void updateCient(ActionEvent actionEvent) {
+    }
+
+    public void uploadInCloud(ActionEvent actionEvent) {
+
+    }
+
+    public void updateCloud(ActionEvent actionEvent) {
+
+    }
 }

@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CloudController">
    <children>
       <MenuBar prefHeight="25.0" prefWidth="480.0">
         <menus>
@@ -22,10 +22,10 @@
                   <Font size="15.0" />
                </font>
             </Label>
-              <ListView fx:id="listViewLocal" prefHeight="577.0" prefWidth="240.0" />
+              <ListView fx:id="clientListView" prefHeight="577.0" prefWidth="240.0"/>
               <HBox prefHeight="65.0" prefWidth="480.0">
                   <Button mnemonicParsing="false" onAction="#download" prefHeight="60.0" prefWidth="125.0" text="Download" />
-                  <Button mnemonicParsing="false" onAction="#updateCient" prefHeight="60.0" prefWidth="125.0" text="Update cloud" />
+                  <Button mnemonicParsing="false" onAction="#updateClient" prefHeight="60.0" prefWidth="125.0" text="Update cloud" />
               </HBox>
           </VBox>
          <VBox prefHeight="640.0" prefWidth="240.0">
@@ -35,7 +35,7 @@
                      <Font size="15.0" />
                   </font>
                </Label>
-               <ListView fx:id="listViewCloud" prefHeight="577.0" prefWidth="240.0" />
+               <ListView fx:id="serverListView" prefHeight="577.0" prefWidth="240.0" />
                <HBox prefHeight="65.0" prefWidth="240.0">
                   <children>
                      <Button mnemonicParsing="false" onAction="#uploadInCloud" prefHeight="60.0" prefWidth="125.0" text="Upload in cloud" />

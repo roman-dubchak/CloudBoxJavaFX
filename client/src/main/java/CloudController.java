@@ -19,12 +19,12 @@ public class CloudController implements Initializable {
 
     private String clientDir = "client/clientDir";
 
-    public ListView<String> clientView;
-    public ListView<String> serverView;
+    public ListView<String> clientListView;
+    public ListView<String> serverListView;
 
-    public void upload(ActionEvent actionEvent) throws IOException {
+    public void uploadInCloud(ActionEvent actionEvent) throws IOException {
         Network.get().getOut().writeUTF("/upload");
-        String fileName = clientView.getSelectionModel().getSelectedItem();
+        String fileName = clientListView.getSelectionModel().getSelectedItem();
         Network.get().getOut().writeUTF(fileName);
         File file = new File(clientDir + "/" + fileName);
         long size = file.length();
@@ -41,7 +41,7 @@ public class CloudController implements Initializable {
 
     public void download(ActionEvent actionEvent) throws IOException {
         Network.get().getOut().writeUTF("/download");
-        String fileName = serverView.getSelectionModel().getSelectedItem();
+        String fileName = serverListView.getSelectionModel().getSelectedItem();
         Network.get().getOut().writeUTF(fileName);
         long size = Network.get().getIn().readLong();
         File file = new File(clientDir + "/" + fileName);
@@ -66,8 +66,8 @@ public class CloudController implements Initializable {
 
     private void fillServerData() {
         try {
-            serverView.getItems().clear();
-            serverView.getItems().addAll(getServerFiles());
+            serverListView.getItems().clear();
+            serverListView.getItems().addAll(getServerFiles());
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Can not fill client files");
@@ -76,8 +76,8 @@ public class CloudController implements Initializable {
 
     private void fillClientData() {
         try {
-            clientView.getItems().clear();
-            clientView.getItems().addAll(getClientFiles());
+            clientListView.getItems().clear();
+            clientListView.getItems().addAll(getClientFiles());
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Can not fill client files");
@@ -107,5 +107,11 @@ public class CloudController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         fillClientData();
         fillServerData();
+    }
+
+    public void updateClient(ActionEvent actionEvent) {
+    }
+
+    public void updateCloud(ActionEvent actionEvent) {
     }
 }
