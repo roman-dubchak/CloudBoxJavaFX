@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+   <children>
+      <MenuBar prefHeight="25.0" prefWidth="480.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <AnchorPane prefHeight="600.0" prefWidth="480.0">
+          <VBox layoutX="240.0" prefHeight="640.0" prefWidth="240.0">
+            <Label alignment="CENTER" prefHeight="57.0" prefWidth="240.0" text="Cloud Storage">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+              <ListView fx:id="listViewLocal" prefHeight="577.0" prefWidth="240.0" />
+              <HBox prefHeight="65.0" prefWidth="480.0">
+                  <Button mnemonicParsing="false" onAction="#download" prefHeight="60.0" prefWidth="125.0" text="Download" />
+                  <Button mnemonicParsing="false" onAction="#updateCient" prefHeight="60.0" prefWidth="125.0" text="Update cloud" />
+              </HBox>
+          </VBox>
+         <VBox prefHeight="640.0" prefWidth="240.0">
+            <children>
+               <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="55.0" prefWidth="241.0" text="Local Disk">
+                  <font>
+                     <Font size="15.0" />
+                  </font>
+               </Label>
+               <ListView fx:id="listViewCloud" prefHeight="577.0" prefWidth="240.0" />
+               <HBox prefHeight="65.0" prefWidth="240.0">
+                  <children>
+                     <Button mnemonicParsing="false" onAction="#uploadInCloud" prefHeight="60.0" prefWidth="125.0" text="Upload in cloud" />
+                     <Button mnemonicParsing="false" onAction="#updateCloud" prefHeight="60.0" prefWidth="125.0" text="Update" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
+      </AnchorPane>
+   </children>
+</VBox>
