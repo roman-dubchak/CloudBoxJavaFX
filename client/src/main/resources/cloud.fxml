@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
@@ -17,30 +18,43 @@
       </MenuBar>
       <AnchorPane prefHeight="600.0" prefWidth="480.0">
           <VBox layoutX="240.0" prefHeight="640.0" prefWidth="240.0">
-            <Label alignment="CENTER" prefHeight="57.0" prefWidth="240.0" text="Cloud Storage">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-              <ListView fx:id="clientListView" prefHeight="577.0" prefWidth="240.0"/>
-              <HBox prefHeight="65.0" prefWidth="480.0">
-                  <Button mnemonicParsing="false" onAction="#download" prefHeight="60.0" prefWidth="125.0" text="Download" />
-                  <Button mnemonicParsing="false" onAction="#updateClient" prefHeight="60.0" prefWidth="125.0" text="Update cloud" />
+            <Label alignment="CENTER" prefHeight="55.0" prefWidth="240.0" text="Cloud Storage" />
+              <ListView fx:id="clientListView" prefHeight="577.0" prefWidth="240.0" />
+              <HBox prefHeight="65.0" prefWidth="480.0" spacing="5.0">
+                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#download" prefHeight="60.0" prefWidth="125.0" text="Download">
+                  <padding>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </padding>
+                  <font>
+                     <Font size="12.0" />
+                  </font></Button>
+                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#deleteFileInClient" prefHeight="60.0" prefWidth="125.0" text="Delete">
+                  <font>
+                     <Font size="12.0" />
+                  </font></Button>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
               </HBox>
           </VBox>
          <VBox prefHeight="640.0" prefWidth="240.0">
             <children>
-               <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="55.0" prefWidth="241.0" text="Local Disk">
-                  <font>
-                     <Font size="15.0" />
-                  </font>
-               </Label>
+               <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="55.0" prefWidth="240.0" text="Local Disk" />
                <ListView fx:id="serverListView" prefHeight="577.0" prefWidth="240.0" />
-               <HBox prefHeight="65.0" prefWidth="240.0">
+               <HBox prefHeight="65.0" prefWidth="240.0" spacing="5.0">
                   <children>
-                     <Button mnemonicParsing="false" onAction="#uploadInCloud" prefHeight="60.0" prefWidth="125.0" text="Upload in cloud" />
-                     <Button mnemonicParsing="false" onAction="#updateCloud" prefHeight="60.0" prefWidth="125.0" text="Update" />
+                     <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#uploadInCloud" prefHeight="60.0" prefWidth="125.0" text="Upload in cloud">
+                        <font>
+                           <Font size="12.0" />
+                        </font></Button>
+                     <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#deleteFileInCloud" prefHeight="60.0" prefWidth="125.0" text="Delete">
+                        <font>
+                           <Font size="12.0" />
+                        </font></Button>
                   </children>
+                  <padding>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </padding>
                </HBox>
             </children>
          </VBox>

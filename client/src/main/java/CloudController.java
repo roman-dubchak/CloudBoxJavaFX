@@ -109,9 +109,9 @@ public class CloudController implements Initializable {
         fillServerData();
     }
 
-    public void updateClient(ActionEvent actionEvent) {
+    public void deleteFileInClient(ActionEvent actionEvent) {
     }
 
-    public void updateCloud(ActionEvent actionEvent) {
+    public void deleteFileInCloud(ActionEvent actionEvent) {
     }
 }
