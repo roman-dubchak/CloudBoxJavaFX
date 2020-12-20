@@ -1,3 +1,5 @@
+import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
@@ -7,10 +9,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -19,27 +23,32 @@ public class CloudController implements Initializable {
 
     private String clientDir = "client/clientDir";
 
+    private ObjectEncoderOutputStream os;
+    private ObjectDecoderInputStream is;
+
     public ListView<String> clientListView;
-    public ListView<String> serverListView;
+    public ListView<String> serverListView; // заменить на ViewTables
 
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
-        Network.get().getOut().writeUTF("/upload");
         String fileName = clientListView.getSelectionModel().getSelectedItem();
-        Network.get().getOut().writeUTF(fileName);
+        os.writeObject(fileName);
         File file = new File(clientDir + "/" + fileName);
         long size = file.length();
-        Network.get().getOut().writeLong(size);
-        byte[] buffer = new byte[255];
-        FileInputStream fis = new FileInputStream(file);
-        for (int i = 0; i < (size + 255) / 256; i++) {
-            int read = fis.read(buffer);
-            Network.get().getOut().write(buffer, 0, read);
-        }
-        Network.get().getOut().flush();
+        os.writeObject(size);
+        os.writeObject(file);
+
+//        byte[] buffer = new byte[255];
+//        FileInputStream fis = new FileInputStream(file);
+//        for (int i = 0; i < (size + 255) / 256; i++) {
+//            int read = fis.read(buffer);
+//            Network.get().getOut().write(buffer, 0, read);
+//        }
+        os.flush();
         fillServerData();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
+
         Network.get().getOut().writeUTF("/download");
         String fileName = serverListView.getSelectionModel().getSelectedItem();
         Network.get().getOut().writeUTF(fileName);
