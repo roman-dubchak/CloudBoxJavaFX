@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class CloudController implements Initializable {
 
     private String clientDir = "client/clientDir";
+    private String serverFiles = "server/serverFiles/User1";
+
 
     private ObjectEncoderOutputStream os;
     private ObjectDecoderInputStream is;
@@ -44,33 +47,33 @@ public class CloudController implements Initializable {
 //            Network.get().getOut().write(buffer, 0, read);
 //        }
         os.flush();
-        fillServerData();
+        fillClientData();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
-
-        Network.get().getOut().writeUTF("/download");
-        String fileName = serverListView.getSelectionModel().getSelectedItem();
-        Network.get().getOut().writeUTF(fileName);
-        long size = Network.get().getIn().readLong();
-        File file = new File(clientDir + "/" + fileName);
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        FileOutputStream fos = new FileOutputStream(file);
-        byte [] buffer = new byte[256];
-        for (int i = 0; i < (size + 255) / 256; i++) {
-            if (i == (size + 255) / 256 - 1) {
-                for (int j = 0; j < size % 256; j++) {
-                    fos.write(Network.get().getIn().readByte());
-                }
-            } else {
-                int read = Network.get().getIn().read(buffer);
-                fos.write(buffer, 0, read);
-            }
-        }
-        fos.close();
-        fillClientData();
+//
+//        Network.get().getOut().writeUTF("/download");
+//        String fileName = serverListView.getSelectionModel().getSelectedItem();
+//        Network.get().getOut().writeUTF(fileName);
+//        long size = Network.get().getIn().readLong();
+//        File file = new File(clientDir + "/" + fileName);
+//        if (!file.exists()) {
+//            file.createNewFile();
+//        }
+//        FileOutputStream fos = new FileOutputStream(file);
+//        byte [] buffer = new byte[256];
+//        for (int i = 0; i < (size + 255) / 256; i++) {
+//            if (i == (size + 255) / 256 - 1) {
+//                for (int j = 0; j < size % 256; j++) {
+//                    fos.write(Network.get().getIn().readByte());
+//                }
+//            } else {
+//                int read = Network.get().getIn().read(buffer);
+//                fos.write(buffer, 0, read);
+//            }
+//        }
+//        fos.close();
+        fillServerData();
     }
 
     private void fillServerData() {
@@ -94,13 +97,12 @@ public class CloudController implements Initializable {
     }
 
     private List<String> getServerFiles() throws IOException {
-        Network.get().getOut().writeUTF("/list");
-        int size = Network.get().getIn().readInt();
-        ArrayList<String> serverFiles = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            serverFiles.add(Network.get().getIn().readUTF());
-        }
-        return serverFiles;
+        // ctrl + alt + v, cmd + opt + v
+        Path clientDirPath = Paths.get(serverFiles);
+        // Files
+        return Files.list(clientDirPath)
+                .map(path -> path.getFileName().toString())
+                .collect(Collectors.toList());
     }
 
     private List<String> getClientFiles() throws IOException {
@@ -116,6 +118,13 @@ public class CloudController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         fillClientData();
         fillServerData();
+        try {
+            Socket socket = new Socket("localhost", 8189);
+            os = new ObjectEncoderOutputStream(socket.getOutputStream());
+            is = new ObjectDecoderInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void deleteFileInClient(ActionEvent actionEvent) {
