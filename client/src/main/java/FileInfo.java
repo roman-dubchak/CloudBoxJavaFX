@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 public class FileInfo extends AbstractFile{
+    private static final long serialVersionUID = 21980928349190L;
 
     public enum FileType {
         FILE("F"), DIRECTORY("D");
@@ -22,26 +23,21 @@ public class FileInfo extends AbstractFile{
 
     private String fileName;
     private FileType fileType;
-
-    public FileType getFileType() {
-        return fileType;
-    }
-
     private Long fileSize;
     private LocalDateTime lastModified;
 
     public String getFileName() {
         return fileName;
     }
-
     public Long getFileSize() {
         return fileSize;
     }
-
     public LocalDateTime getLastModified() {
         return lastModified;
     }
-
+    public FileType getFileType() {
+        return fileType;
+    }
 
     public FileInfo(Path path) {
         try {

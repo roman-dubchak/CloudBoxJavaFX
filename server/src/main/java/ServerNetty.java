@@ -12,6 +12,7 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class ServerNetty {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServerNetty.class);
@@ -35,8 +36,8 @@ public class ServerNetty {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
-                                    new ObjectEncoder()
-//                                    new AbstractMessageHandler()
+                                    new ObjectEncoder(),
+                                    new ByteToFileInboundHandler()
                             );
                         }
                     });

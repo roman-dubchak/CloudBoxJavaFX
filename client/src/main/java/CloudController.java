@@ -34,45 +34,49 @@ public class CloudController implements Initializable {
 
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
         String fileName = clientListView.getSelectionModel().getSelectedItem();
-        os.writeObject(fileName);
         File file = new File(clientDir + "/" + fileName);
-        long size = file.length();
-        os.writeObject(size);
-        os.writeObject(file);
-
-//        byte[] buffer = new byte[255];
-//        FileInputStream fis = new FileInputStream(file);
-//        for (int i = 0; i < (size + 255) / 256; i++) {
-//            int read = fis.read(buffer);
-//            Network.get().getOut().write(buffer, 0, read);
-//        }
+        os.writeObject(new FileInfo(file.toPath()));
         os.flush();
+        try {
+            FileInfo fileinfo = (FileInfo) is.readObject();
+            String fileN = fileinfo.getFileName();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         fillClientData();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
 //
 //        Network.get().getOut().writeUTF("/download");
-//        String fileName = serverListView.getSelectionModel().getSelectedItem();
+        String fileName = serverListView.getSelectionModel().getSelectedItem();
 //        Network.get().getOut().writeUTF(fileName);
 //        long size = Network.get().getIn().readLong();
-//        File file = new File(clientDir + "/" + fileName);
+        File file = new File(serverFiles + "/" + fileName);
 //        if (!file.exists()) {
 //            file.createNewFile();
 //        }
 //        FileOutputStream fos = new FileOutputStream(file);
+
+        try {
+            FileInfo fileinfo = (FileInfo) is.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
 //        byte [] buffer = new byte[256];
 //        for (int i = 0; i < (size + 255) / 256; i++) {
 //            if (i == (size + 255) / 256 - 1) {
 //                for (int j = 0; j < size % 256; j++) {
-//                    fos.write(Network.get().getIn().readByte());
+//                    is.write(Network.get().getIn().readByte());
 //                }
 //            } else {
 //                int read = Network.get().getIn().read(buffer);
-//                fos.write(buffer, 0, read);
+//                is.write(buffer, 0, read);
 //            }
 //        }
-//        fos.close();
+        is.close();
         fillServerData();
     }
 
@@ -82,7 +86,7 @@ public class CloudController implements Initializable {
             serverListView.getItems().addAll(getServerFiles());
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Can not fill client files");
+            throw new RuntimeException("Can not fill server files");
         }
     }
 
@@ -98,9 +102,9 @@ public class CloudController implements Initializable {
 
     private List<String> getServerFiles() throws IOException {
         // ctrl + alt + v, cmd + opt + v
-        Path clientDirPath = Paths.get(serverFiles);
+        Path serverDirPath = Paths.get(serverFiles);
         // Files
-        return Files.list(clientDirPath)
+        return Files.list(serverDirPath)
                 .map(path -> path.getFileName().toString())
                 .collect(Collectors.toList());
     }
