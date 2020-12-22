@@ -26,7 +26,7 @@
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="480.0" VBox.vgrow="ALWAYS">
          <children>
             <ListView fx:id="clientListView" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
-              <ListView fx:id="serverListView" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
+            <ListView fx:id="serverListView" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
          </children></HBox>
              <HBox alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="480.0" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>

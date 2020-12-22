@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import jdk.internal.util.xml.impl.ReaderUTF8;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +24,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class CloudController implements Initializable {
-
+    private static final Logger LOG = LoggerFactory.getLogger(CloudController.class);
     private String clientDir = "client/clientDir";
     private String serverFiles = "server/serverFiles/User1";
 
@@ -40,22 +42,23 @@ public class CloudController implements Initializable {
         os.flush();
         try {
             FileInfo fileInfoFromServer = (FileInfo) is.readObject();
+            LOG.info("File in server" + fileInfoFromServer);
             String fileNameFromServer = fileInfoFromServer.getFileName();
             Path pathFileInServer = Paths.get(serverFiles + "/" + fileNameFromServer);
             if (Files.notExists(pathFileInServer)){
                 File fileInServer = new File(pathFileInServer.toString());
                 byte [] dataFileFromServer = fileInfoFromServer.getDataFile();
-                Files.write(fileInServer.toPath(), dataFileFromServer);
+                Files.readAllBytes(pathFileInServer);
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         fillServerData();
-        fillClientData();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
+        fillClientData();
     }
 
     private void fillServerData() {

@@ -64,8 +64,9 @@ public class FileInfo extends AbstractFile{
     public String toString() {
         return "File{"+
                 "Last modified " + lastModified +
-                "File name " + fileName + "\'" +
-                "Type file " + fileType + "\'" +
-                "Size File " + fileSize + "\'" + "}";
+                ", File name " + fileName + "\'" +
+                ", Data file " + dataFile + "\'" +
+                ", Type file " + fileType + "\'" +
+                ", Size File " + fileSize + "\'" + "}";
     }
 }
