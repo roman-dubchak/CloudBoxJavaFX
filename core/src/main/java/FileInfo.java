@@ -30,6 +30,9 @@ public class FileInfo extends AbstractFile{
     public String getFileName() {
         return fileName;
     }
+    public byte[] getDataFile() {
+        return dataFile;
+    }
     public Long getFileSize() {
         return fileSize;
     }
@@ -54,9 +57,7 @@ public class FileInfo extends AbstractFile{
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Unable to create file info from path");
-
         }
-
     }
 
     @Override
@@ -66,6 +67,5 @@ public class FileInfo extends AbstractFile{
                 "File name " + fileName + "\'" +
                 "Type file " + fileType + "\'" +
                 "Size File " + fileSize + "\'" + "}";
-
     }
 }

@@ -3,6 +3,7 @@ import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import jdk.internal.util.xml.impl.ReaderUTF8;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,51 +34,28 @@ public class CloudController implements Initializable {
     public ListView<String> serverListView; // заменить на ViewTables
 
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
-        String fileName = clientListView.getSelectionModel().getSelectedItem();
-        File file = new File(clientDir + "/" + fileName);
-        os.writeObject(new FileInfo(file.toPath()));
+        String fileNameFromClient = clientListView.getSelectionModel().getSelectedItem();
+        File fileInClient = new File(clientDir + "/" + fileNameFromClient);
+        os.writeObject(new FileInfo(fileInClient.toPath()));
         os.flush();
         try {
             FileInfo fileInfoFromServer = (FileInfo) is.readObject();
-            String fileN = fileInfoFromServer.getFileName();
+            String fileNameFromServer = fileInfoFromServer.getFileName();
+            Path pathFileInServer = Paths.get(serverFiles + "/" + fileNameFromServer);
+            if (Files.notExists(pathFileInServer)){
+                File fileInServer = new File(pathFileInServer.toString());
+                byte [] dataFileFromServer = fileInfoFromServer.getDataFile();
+                Files.write(fileInServer.toPath(), dataFileFromServer);
+            }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
+        fillServerData();
         fillClientData();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
-//
-//        Network.get().getOut().writeUTF("/download");
-        String fileName = serverListView.getSelectionModel().getSelectedItem();
-//        Network.get().getOut().writeUTF(fileName);
-//        long size = Network.get().getIn().readLong();
-        File file = new File(serverFiles + "/" + fileName);
-//        if (!file.exists()) {
-//            file.createNewFile();
-//        }
-//        FileOutputStream fos = new FileOutputStream(file);
-
-        try {
-            FileInfo fileinfo = (FileInfo) is.readObject();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-//        byte [] buffer = new byte[256];
-//        for (int i = 0; i < (size + 255) / 256; i++) {
-//            if (i == (size + 255) / 256 - 1) {
-//                for (int j = 0; j < size % 256; j++) {
-//                    is.write(Network.get().getIn().readByte());
-//                }
-//            } else {
-//                int read = Network.get().getIn().read(buffer);
-//                is.write(buffer, 0, read);
-//            }
-//        }
-        is.close();
-        fillServerData();
     }
 
     private void fillServerData() {
@@ -110,9 +88,7 @@ public class CloudController implements Initializable {
     }
 
     private List<String> getClientFiles() throws IOException {
-        // ctrl + alt + v, cmd + opt + v
         Path clientDirPath = Paths.get(clientDir);
-        // Files
         return Files.list(clientDirPath)
                 .map(path -> path.getFileName().toString())
                 .collect(Collectors.toList());
