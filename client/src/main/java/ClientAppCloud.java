@@ -4,7 +4,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class ClientCloud extends Application {
+public class ClientAppCloud extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {

@@ -38,8 +38,8 @@ public class CloudController implements Initializable {
         os.writeObject(new FileInfo(file.toPath()));
         os.flush();
         try {
-            FileInfo fileinfo = (FileInfo) is.readObject();
-            String fileN = fileinfo.getFileName();
+            FileInfo fileInfoFromServer = (FileInfo) is.readObject();
+            String fileN = fileInfoFromServer.getFileName();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

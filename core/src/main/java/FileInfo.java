@@ -22,6 +22,7 @@ public class FileInfo extends AbstractFile{
     }
 
     private String fileName;
+    private byte [] dataFile;
     private FileType fileType;
     private Long fileSize;
     private LocalDateTime lastModified;
@@ -42,6 +43,7 @@ public class FileInfo extends AbstractFile{
     public FileInfo(Path path) {
         try {
             this.fileName = path.getFileName().toString();
+            this.dataFile = Files.readAllBytes(path);
             this.fileSize = Files.size(path);
             this.fileType = Files.isDirectory(path) ? FileType.DIRECTORY : FileType.FILE;
             if (this.fileType == FileType.DIRECTORY){
