@@ -12,6 +12,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
     protected void channelRead0(ChannelHandlerContext ctx, AbstractFile abstractFile) throws Exception {
         LOG.info("File info: {}", abstractFile);
         if (abstractFile instanceof FileInfo){
+            ctx.write(abstractFile);
         }
     }
 

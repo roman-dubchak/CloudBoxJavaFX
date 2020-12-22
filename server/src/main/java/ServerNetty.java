@@ -37,6 +37,8 @@ public class ServerNetty {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
+//                                    new FileOutboundHandler(),
+//                                    new FileInboundHandler()
                                     new AbstractFileInboundHandler()
                             );
                         }
