@@ -17,10 +17,6 @@ public class ServerNetty {
 
     private static final Logger LOG = LoggerFactory.getLogger(ServerNetty.class);
 
-    //                       String <---------bytes
-    // [_]                 <--___--________---____-----    <- 01010010  [_]
-    //     00100101001 ->    String -> bytes ------------->
-
     public ServerNetty() throws InterruptedException {
 
         ByteBuf buf;
@@ -37,8 +33,6 @@ public class ServerNetty {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-//                                    new FileOutboundHandler(),
-//                                    new FileInboundHandler()
                                     new AbstractFileInboundHandler()
                             );
                         }

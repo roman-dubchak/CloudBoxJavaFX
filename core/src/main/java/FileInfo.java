@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class FileInfo extends AbstractFile{
+public class FileInfo extends AbstractMassage {
     private static final long serialVersionUID = 21980928349190L;
 
     public enum FileType {
@@ -22,7 +22,7 @@ public class FileInfo extends AbstractFile{
     }
 
     private String fileName;
-    private byte [] dataFile;
+    private byte [] data;
     private FileType fileType;
     private Long fileSize;
     private LocalDateTime lastModified;
@@ -30,8 +30,8 @@ public class FileInfo extends AbstractFile{
     public String getFileName() {
         return fileName;
     }
-    public byte[] getDataFile() {
-        return dataFile;
+    public byte[] getData() {
+        return data;
     }
     public Long getFileSize() {
         return fileSize;
@@ -46,7 +46,7 @@ public class FileInfo extends AbstractFile{
     public FileInfo(Path path) {
         try {
             this.fileName = path.getFileName().toString();
-            this.dataFile = Files.readAllBytes(path);
+            this.data = Files.readAllBytes(path);
             this.fileSize = Files.size(path);
             this.fileType = Files.isDirectory(path) ? FileType.DIRECTORY : FileType.FILE;
             if (this.fileType == FileType.DIRECTORY){
@@ -65,7 +65,7 @@ public class FileInfo extends AbstractFile{
         return "File{"+
                 "Last modified " + lastModified +
                 ", File name " + fileName + "\'" +
-                ", Data file " + dataFile + "\'" +
+                ", Data file " + data + "\'" +
                 ", Type file " + fileType + "\'" +
                 ", Size File " + fileSize + "\'" + "}";
     }
