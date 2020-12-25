@@ -26,7 +26,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
             FileInfo fileInfo = (FileInfo) massage;
             Files.write(Paths.get("server/serverFiles", fileInfo.getFileName()),
                     fileInfo.getData(),
-                    StandardOpenOption.CREATE_NEW);
+                    StandardOpenOption.CREATE);
             ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
             LOG.info("Server successfully received file: {}" + fileInfo);
         }

@@ -46,7 +46,7 @@ public class FileInfo extends AbstractMassage {
     public FileInfo(Path path) {
         try {
             this.fileName = path.getFileName().toString();
-            this.data = Files.readAllBytes(path);
+            this.data = Files.readAllBytes(path); // продумать для больших файлов
             this.fileSize = Files.size(path);
             this.fileType = Files.isDirectory(path) ? FileType.DIRECTORY : FileType.FILE;
             if (this.fileType == FileType.DIRECTORY){

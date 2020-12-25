@@ -13,6 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -77,8 +78,10 @@ public class CloudController implements Initializable {
         os.flush();
         // записать в отдельный тред
         ListFilesServer lf = (ListFilesServer) is.readObject();
-
         return lf.getFiles();
+//        List<String> ls = new ArrayList<String>();
+//        process(new ListFilesServer(ls));
+//        return ls;
     }
 
     private List<String> getClientFiles() throws IOException {
@@ -98,27 +101,27 @@ public class CloudController implements Initializable {
             fillClientData();
             fillServerData();
 
-            Thread readThread = new Thread(()->{
-                while (true) {
-                    try {
-                        AbstractMassage massage = (AbstractMassage) is.readObject();
-                        process(massage);
-                    } catch (ClassNotFoundException | IOException e) {
-                        e.printStackTrace();
-                    }                 }
-            });
-            readThread.setDaemon(true);
-            readThread.start();
+//            Thread readThread = new Thread(()->{
+//                while (true) {
+//                    try {
+//                        AbstractMassage massage = (AbstractMassage) is.readObject();
+//                        process(massage);
+//                    } catch (ClassNotFoundException | IOException e) {
+//                        e.printStackTrace();
+//                    }                 }
+//            });
+//            readThread.setDaemon(true);
+//            readThread.start();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void process(AbstractMassage massage) {
+    private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
         if (massage instanceof ListFilesServer){
             ListFilesServer ls = (ListFilesServer) massage;
-
+            getServerFiles().addAll(ls.getFiles());
         }
     }
 
