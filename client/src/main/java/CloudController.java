@@ -82,6 +82,7 @@ public class CloudController implements Initializable {
 //        List<String> ls = new ArrayList<String>();
 //        process(new ListFilesServer(ls));
 //        return ls;
+//        return process((AbstractMassage) new ListFilesServer);
     }
 
     private List<String> getClientFiles() throws IOException {
