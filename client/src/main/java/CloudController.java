@@ -138,11 +138,13 @@ public class CloudController implements Initializable {
     public void deleteFileInClient(ActionEvent actionEvent) {
         String fileNameFromClientDel = clientListView.getSelectionModel().getSelectedItem();
         try {
-//            getClientFiles().remove(fileNameFromClientDel);
-            getClientFiles().remove(fileNameFromClientDel);
+            Files.delete(Paths.get(clientDir,fileNameFromClientDel));
+            LOG.info("Client to delete the file {}", fileNameFromClientDel);
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException("File not found on client directory");
         }
+
         fillClientData();
     }
 
