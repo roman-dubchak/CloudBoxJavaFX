@@ -1,9 +1,7 @@
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.LoggerFactory;
-
 import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<AbstractMassage> {
     private final static Logger LOG = LoggerFactory.getLogger(AbstractFileInboundHandler.class);
+    private String serverDir = "server/serverFiles";
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AbstractMassage massage) throws Exception {
@@ -24,21 +23,26 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
 
         if (massage instanceof FileInfo){
             FileInfo fileInfo = (FileInfo) massage;
-            Files.write(Paths.get("server/serverFiles", fileInfo.getFileName()),
-                    fileInfo.getData(),
-                    StandardOpenOption.CREATE);
-            ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
-            LOG.info("Server successfully received file: {}" + fileInfo);
+            LOG.info("Client upload file type: {}", fileInfo.getFileType());
+            if(fileInfo.getFileType().toString() == "FILE") {
+                LOG.info("Client upload file: {}", fileInfo);
+                Files.write(Paths.get(serverDir, fileInfo.getFileName()),
+                        fileInfo.getData(),
+                        StandardOpenOption.CREATE);
+                ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
+                LOG.info("Server successfully received file: {}", fileInfo);
+            }
         }
 
         if (massage instanceof FileRequest){
+            LOG.info("Client requested to download the file: {}", ((FileRequest) massage).getFileName());
             FileRequest request = (FileRequest) massage;
-            ctx.writeAndFlush(new FileInfo(Paths.get("server/serverFiles", request.getFileName())));
+            ctx.writeAndFlush(new FileInfo(Paths.get(serverDir, request.getFileName())));
         }
     }
 
     private List<String> getServerFiles() throws IOException {
-        return Files.list(Paths.get("server/serverFiles"))
+        return Files.list(Paths.get(serverDir))
                 .map(Path::getFileName)
                 .map(Path::toString)
                 .collect(Collectors.toList());

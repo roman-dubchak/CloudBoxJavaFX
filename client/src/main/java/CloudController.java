@@ -13,6 +13,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,22 +37,30 @@ public class CloudController implements Initializable {
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
-        // создаем файл по реквесту
-//        try {
-//            FileInfo fileInfoFromServer = (FileInfo) is.readObject();
-//            LOG.info("File in server" + fileInfoFromServer);
-//            String fileNameFromServer = fileInfoFromServer.getFileName();
-//            Path pathFileInServer = Paths.get("server/serverFiles" + fileNameFromServer);
-//            if (Files.notExists(pathFileInServer)){
-//                File fileInServer = new File(pathFileInServer.toString());
-//                byte [] dataFileFromServer = fileInfoFromServer.getData();
-//                Files.readAllBytes(pathFileInServer);
-//            }
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        String fileNameFromServer = serverListView.getSelectionModel().getSelectedItem();
+        os.writeObject(new FileRequest(fileNameFromServer));
+        os.flush();
+
+        try {
+            FileInfo fileInfo = (FileInfo) is.readObject();
+            if (fileInfo.getFileType().toString() == "FILE") {
+                Files.write(Paths.get(clientDir, fileInfo.getFileName()),
+                        fileInfo.getData(),
+                        StandardOpenOption.CREATE_NEW);
+            } else {
+                LOG.info("");
+//                для передачи папки
+//                Files.createDirectories(Paths.get(clientDir, fileInfo.getFileName()));
+            }
+
+        } catch(ClassNotFoundException e){
+                e.printStackTrace();
+                throw new RuntimeException("File not found on server");
+            }
+
         fillClientData();
     }
+
 
     private void fillServerData() {
         try {
@@ -95,12 +104,9 @@ public class CloudController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            Socket socket = new Socket("localhost", 8189);
+            Socket socket = new Socket("localhost", 8190);
             os = new ObjectEncoderOutputStream(socket.getOutputStream());
             is = new ObjectDecoderInputStream(socket.getInputStream());
-
-            fillClientData();
-            fillServerData();
 
 //            Thread readThread = new Thread(()->{
 //                while (true) {
@@ -114,21 +120,30 @@ public class CloudController implements Initializable {
 //            readThread.setDaemon(true);
 //            readThread.start();
 
+            fillClientData();
+            fillServerData();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
-        if (massage instanceof ListFilesServer){
-            ListFilesServer ls = (ListFilesServer) massage;
-            getServerFiles().addAll(ls.getFiles());
-        }
-    }
+//    private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
+//        if (massage instanceof ListFilesServer){
+//            ListFilesServer ls = (ListFilesServer) massage;
+//            getServerFiles().addAll(ls.getFiles());
+//        }
+//    }
 
     public void deleteFileInClient(ActionEvent actionEvent) {
     }
 
     public void deleteFileInCloud(ActionEvent actionEvent) {
+    }
+
+    public void renameFileInClient(ActionEvent actionEvent) {
+    }
+
+    public void renameFileInCloud(ActionEvent actionEvent) {
     }
 }
