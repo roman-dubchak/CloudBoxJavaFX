@@ -46,7 +46,7 @@ public class CloudController implements Initializable {
             if (fileInfo.getFileType().toString() == "FILE") {
                 Files.write(Paths.get(clientDir, fileInfo.getFileName()),
                         fileInfo.getData(),
-                        StandardOpenOption.CREATE_NEW);
+                        StandardOpenOption.CREATE);
             } else {
                 LOG.info("");
 //                для передачи папки
@@ -136,6 +136,14 @@ public class CloudController implements Initializable {
 //    }
 
     public void deleteFileInClient(ActionEvent actionEvent) {
+        String fileNameFromClientDel = clientListView.getSelectionModel().getSelectedItem();
+        try {
+//            getClientFiles().remove(fileNameFromClientDel);
+            getClientFiles().remove(fileNameFromClientDel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fillClientData();
     }
 
     public void deleteFileInCloud(ActionEvent actionEvent) {

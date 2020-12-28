@@ -32,6 +32,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
                 ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
                 LOG.info("Server successfully received file: {}", fileInfo);
             }
+            LOG.info("Client tries to upload a folder {}", fileInfo.getFileName(), fileInfo.getFileType());
         }
 
         if (massage instanceof FileRequest){
