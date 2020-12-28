@@ -144,11 +144,25 @@ public class CloudController implements Initializable {
             e.printStackTrace();
             throw new RuntimeException("File not found on client directory");
         }
-
         fillClientData();
     }
 
     public void deleteFileInCloud(ActionEvent actionEvent) {
+        String fileNameFromServerDel = serverListView.getSelectionModel().getSelectedItem();
+        try {
+            os.writeObject(new FileRequestDelete(fileNameFromServerDel));
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            getServerFiles();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        fillServerData();
     }
 
     public void renameFileInClient(ActionEvent actionEvent) {
