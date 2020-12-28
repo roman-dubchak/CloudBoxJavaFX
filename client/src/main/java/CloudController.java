@@ -166,6 +166,7 @@ public class CloudController implements Initializable {
     }
 
     public void renameFileInClient(ActionEvent actionEvent) {
+
     }
 
     public void renameFileInCloud(ActionEvent actionEvent) {
