@@ -53,6 +53,7 @@ public class CloudController implements Initializable {
         os.writeObject(new FileRequest(fileNameFromServer));
         os.flush();
 
+        // TODO: threadRead
         try {
             FileInfo fileInfo = (FileInfo) is.readObject();
             if (fileInfo.getFileType().toString() == "FILE") {
@@ -97,13 +98,12 @@ public class CloudController implements Initializable {
     private List<String> getServerFiles() throws IOException, ClassNotFoundException {
         os.writeObject(new ListRequest());
         os.flush();
-        // записать в отдельный тред
+        // TODO: threadRead
         ListFilesServer lf = (ListFilesServer) is.readObject();
         return lf.getFiles();
-//        List<String> ls = new ArrayList<String>();
+//        List<String> ls = new ArrayList<String>();is.readObject()
 //        process(new ListFilesServer(ls));
 //        return ls;
-//        return process((AbstractMassage) new ListFilesServer);
     }
 
     private List<String> getClientFiles() throws IOException {
