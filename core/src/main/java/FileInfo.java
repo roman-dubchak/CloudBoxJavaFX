@@ -43,6 +43,10 @@ public class FileInfo extends AbstractMassage {
         return fileType;
     }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public FileInfo(Path path) {
         try {
             this.fileName = path.getFileName().toString();

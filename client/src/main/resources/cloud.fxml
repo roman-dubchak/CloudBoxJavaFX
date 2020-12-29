@@ -5,10 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0"
-      minWidth="480.0" prefHeight="600.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.202"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="CloudController">
-   <children>
+<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="480.0" prefHeight="600.0"
+      prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.202" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CloudController">
       <MenuBar prefHeight="25.0" prefWidth="480.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
@@ -18,6 +16,7 @@
           </Menu>
         </menus>
       </MenuBar>
+   <children>
       <HBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="40.0" prefWidth="480.0" VBox.vgrow="ALWAYS">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="55.0" prefWidth="240.0" text="Local Disk" HBox.hgrow="ALWAYS" />
@@ -25,10 +24,17 @@
          </children></HBox>
       <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="480.0" VBox.vgrow="ALWAYS">
          <children>
-            <ListView fx:id="clientListView" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
-            <ListView fx:id="serverListView" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
+            <ListView fx:id="clientListView" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
+            <ListView fx:id="serverListView" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
          </children></HBox>
-             <HBox alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="480.0" spacing="5.0" VBox.vgrow="ALWAYS">
+      <HBox maxHeight="-Infinity" fx:id="hBoxTextField" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="40.0" prefWidth="480.0" spacing="5.0">
+         <children>
+            <TextField fx:id="textField" prefHeight="30.0" prefWidth="230.0"/>
+            <Button alignment="BOTTOM_CENTER" mnemonicParsing="false" onAction="#renamePopup" prefHeight="30.0" prefWidth="100.0" text="Rename"/>
+         </children>
+      </HBox>
+             <HBox alignment="BOTTOM_CENTER" maxHeight="-Infinity" fx:id="hBoxButton"
+                   maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="480.0" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#uploadInCloud" prefHeight="40.0" prefWidth="125.0" text="Upload">
                <font>
@@ -67,3 +73,4 @@
       </HBox>
    </children>
 </VBox>
+

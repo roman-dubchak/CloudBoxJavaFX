@@ -1,11 +1,14 @@
 import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -14,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -25,9 +27,16 @@ public class CloudController implements Initializable {
 
     private ObjectEncoderOutputStream os;
     private ObjectDecoderInputStream is;
+    private File oldFile;
+    private File newFile;
 
+    @FXML
+    public HBox hBoxTextField;
+    public HBox hBoxButton;
+    public TextField textField;
     public ListView<String> clientListView;
     public ListView<String> serverListView; // заменить на ViewTables
+
 
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
         String fileNameFromClient = clientListView.getSelectionModel().getSelectedItem();
@@ -103,6 +112,9 @@ public class CloudController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        hBoxTextField.setVisible(false);
+        hBoxTextField.setPrefSize(0.0,0.0);
+//        hBoxButton.setPrefSize(480.0,50.0);
         try {
             Socket socket = new Socket("localhost", 8190);
             os = new ObjectEncoderOutputStream(socket.getOutputStream());
@@ -166,9 +178,35 @@ public class CloudController implements Initializable {
     }
 
     public void renameFileInClient(ActionEvent actionEvent) {
+        String fileNameFromClientRename = clientListView.getSelectionModel().getSelectedItem();
+
+        hBoxTextField.setVisible(true);
+        hBoxTextField.setPrefSize(450.0,40.0);
+        textField.requestFocus();
+
+        oldFile = new File(Paths.get(clientDir, fileNameFromClientRename).toString());
+        LOG.info("Try rename file {}", oldFile.getName());
 
     }
 
     public void renameFileInCloud(ActionEvent actionEvent) {
     }
+
+    public void renamePopup(ActionEvent actionEvent) {
+        String newNameFile = textField.getText();
+        LOG.info("Text for name {}", newNameFile);
+
+        newFile = new File(Paths.get(clientDir, newNameFile).toString());
+        LOG.info("newfile with new name {}", newFile.getName());
+
+        if (oldFile.renameTo(newFile)){
+            LOG.info("Rename the oldFile to {}", newFile.getName());
+        } else LOG.info("DIDN'T rename the oldFile to {}", newFile.getName());
+
+        fillClientData();
+        textField.clear();
+        hBoxTextField.setVisible(false);
+        hBoxTextField.setPrefSize(0.0,0.0);
+        clientListView.requestFocus();
+     }
 }
