@@ -30,6 +30,7 @@ public class CloudController implements Initializable {
     private File oldFile;
     private File newFile;
     private String fileNameFromServerRename;
+    private List<String> ls;
 
     @FXML
     public HBox hBoxTextField;
@@ -52,7 +53,6 @@ public class CloudController implements Initializable {
         String fileNameFromServer = serverListView.getSelectionModel().getSelectedItem();
         os.writeObject(new FileRequest(fileNameFromServer));
         os.flush();
-
         // TODO: threadRead
         try {
             FileInfo fileInfo = (FileInfo) is.readObject();
@@ -65,7 +65,6 @@ public class CloudController implements Initializable {
 //                для передачи папки
 //                Files.createDirectories(Paths.get(clientDir, fileInfo.getFileName()));
             }
-
         } catch(ClassNotFoundException e){
                 e.printStackTrace();
                 throw new RuntimeException("File not found on server");
@@ -98,11 +97,12 @@ public class CloudController implements Initializable {
     private List<String> getServerFiles() throws IOException, ClassNotFoundException {
         os.writeObject(new ListRequest());
         os.flush();
+
         // TODO: threadRead
         ListFilesServer lf = (ListFilesServer) is.readObject();
         return lf.getFiles();
-//        List<String> ls = new ArrayList<String>();is.readObject()
-//        process(new ListFilesServer(ls));
+
+//        LOG.info("getServerFiles get files {}", ls.toString());
 //        return ls;
     }
 
@@ -119,11 +119,14 @@ public class CloudController implements Initializable {
         hBoxTextField.setPrefSize(0.0,0.0);
         hBoxTextFieldServer.setVisible(false);
         hBoxTextFieldServer.setPrefSize(0.0,0.0);
-//        hBoxButton.setPrefSize(480.0,50.0);
+
         try {
             Socket socket = new Socket("localhost", 8190);
             os = new ObjectEncoderOutputStream(socket.getOutputStream());
             is = new ObjectDecoderInputStream(socket.getInputStream());
+
+
+//          TODO: threadRead
 
 //            Thread readThread = new Thread(()->{
 //                while (true) {
@@ -145,12 +148,27 @@ public class CloudController implements Initializable {
         }
     }
 
+    //          TODO: threadRead
+
 //    private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
 //        if (massage instanceof ListFilesServer){
-//            ListFilesServer ls = (ListFilesServer) massage;
-//            getServerFiles().addAll(ls.getFiles());
+//            ls = ((ListFilesServer) massage).getFiles();
+//            LOG.info("Server send files {}", ls.toString());
+//            getServerFiles();
+//            fillServerData();
+//        }
+//        if (massage instanceof FileInfo){
+//            if (((FileInfo) massage).getFileType().toString() == "FILE") {
+//                Files.write(Paths.get(clientDir, ((FileInfo) massage).getFileName()),
+//                        ((FileInfo) massage).getData(),
+//                        StandardOpenOption.CREATE);
+//            } else {
+//                LOG.info("");
+//            }
+//            fillClientData();
 //        }
 //    }
+
 
     public void deleteFileInClient(ActionEvent actionEvent) {
         String fileNameFromClientDel = clientListView.getSelectionModel().getSelectedItem();
@@ -166,6 +184,7 @@ public class CloudController implements Initializable {
 
     public void deleteFileInCloud(ActionEvent actionEvent) {
         String fileNameFromServerDel = serverListView.getSelectionModel().getSelectedItem();
+
         try {
             os.writeObject(new FileRequestDelete(fileNameFromServerDel));
             os.flush();
@@ -217,17 +236,18 @@ public class CloudController implements Initializable {
         hBoxTextFieldServer.setVisible(true);
         hBoxTextFieldServer.setPrefSize(450.0,40.0);
         textFieldServer.requestFocus();
-
     }
 
     public void renamePopupServer(ActionEvent actionEvent) {
         String newNameFile = textFieldServer.getText();
+
         try {
             os.writeObject(new FileRequestRename(fileNameFromServerRename, newNameFile));
             os.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         fillServerData();
         textFieldServer.clear();
         hBoxTextFieldServer.setVisible(false);
