@@ -46,6 +46,15 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
             LOG.info("Client to delete the file {}", massage);
             ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
         }
+        if(massage instanceof FileRequestRename){
+            Files.move((Paths.get(serverDir, ((FileRequestRename)massage).getOldFileName())),
+                    (Paths.get(serverDir, ((FileRequestRename)massage).getNewFileName())));
+
+            LOG.info("Client rename file the file {}",
+                    ((FileRequestRename) massage).getOldFileName(),
+                    ((FileRequestRename) massage).getNewFileName());
+            ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
+        }
     }
 
     private List<String> getServerFiles() throws IOException {

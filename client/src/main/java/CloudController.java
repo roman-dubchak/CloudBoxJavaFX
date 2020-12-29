@@ -29,11 +29,14 @@ public class CloudController implements Initializable {
     private ObjectDecoderInputStream is;
     private File oldFile;
     private File newFile;
+    private String fileNameFromServerRename;
 
     @FXML
     public HBox hBoxTextField;
+    public HBox hBoxTextFieldServer;
     public HBox hBoxButton;
     public TextField textField;
+    public TextField textFieldServer;
     public ListView<String> clientListView;
     public ListView<String> serverListView; // заменить на ViewTables
 
@@ -114,6 +117,8 @@ public class CloudController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         hBoxTextField.setVisible(false);
         hBoxTextField.setPrefSize(0.0,0.0);
+        hBoxTextFieldServer.setVisible(false);
+        hBoxTextFieldServer.setPrefSize(0.0,0.0);
 //        hBoxButton.setPrefSize(480.0,50.0);
         try {
             Socket socket = new Socket("localhost", 8190);
@@ -189,9 +194,6 @@ public class CloudController implements Initializable {
 
     }
 
-    public void renameFileInCloud(ActionEvent actionEvent) {
-    }
-
     public void renamePopup(ActionEvent actionEvent) {
         String newNameFile = textField.getText();
         LOG.info("Text for name {}", newNameFile);
@@ -209,4 +211,31 @@ public class CloudController implements Initializable {
         hBoxTextField.setPrefSize(0.0,0.0);
         clientListView.requestFocus();
      }
+
+    public void renameFileInCloud(ActionEvent actionEvent) {
+        fileNameFromServerRename = serverListView.getSelectionModel().getSelectedItem();
+
+        hBoxTextFieldServer.setVisible(true);
+        hBoxTextFieldServer.setPrefSize(450.0,40.0);
+        textFieldServer.requestFocus();
+
+    }
+
+    public void renamePopupServer(ActionEvent actionEvent) {
+        String newNameFile = textFieldServer.getText();
+
+        try {
+            os.writeObject(new FileRequestRename(fileNameFromServerRename, newNameFile));
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        fillServerData();
+
+        textFieldServer.clear();
+        hBoxTextFieldServer.setVisible(false);
+        hBoxTextFieldServer.setPrefSize(0.0,0.0);
+        serverListView.requestFocus();
+    }
 }

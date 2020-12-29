@@ -26,11 +26,18 @@
          <children>
             <ListView fx:id="clientListView" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
             <ListView fx:id="serverListView" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="240.0" HBox.hgrow="ALWAYS" />
-         </children></HBox>
+         </children>
+      </HBox>
       <HBox maxHeight="-Infinity" fx:id="hBoxTextField" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="40.0" prefWidth="480.0" spacing="5.0">
          <children>
             <TextField fx:id="textField" prefHeight="30.0" prefWidth="230.0"/>
             <Button alignment="BOTTOM_CENTER" mnemonicParsing="false" onAction="#renamePopup" prefHeight="30.0" prefWidth="100.0" text="Rename"/>
+         </children>
+      </HBox>
+      <HBox maxHeight="-Infinity" fx:id="hBoxTextFieldServer" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="40.0" prefWidth="480.0" spacing="5.0">
+         <children>
+            <TextField fx:id="textFieldServer" prefHeight="30.0" prefWidth="230.0"/>
+            <Button alignment="BOTTOM_CENTER" mnemonicParsing="false" onAction="#renamePopupServer" prefHeight="30.0" prefWidth="100.0" text="Rename"/>
          </children>
       </HBox>
              <HBox alignment="BOTTOM_CENTER" maxHeight="-Infinity" fx:id="hBoxButton"
