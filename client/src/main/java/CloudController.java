@@ -214,7 +214,6 @@ public class CloudController implements Initializable {
 
     public void renameFileInCloud(ActionEvent actionEvent) {
         fileNameFromServerRename = serverListView.getSelectionModel().getSelectedItem();
-
         hBoxTextFieldServer.setVisible(true);
         hBoxTextFieldServer.setPrefSize(450.0,40.0);
         textFieldServer.requestFocus();
@@ -223,16 +222,13 @@ public class CloudController implements Initializable {
 
     public void renamePopupServer(ActionEvent actionEvent) {
         String newNameFile = textFieldServer.getText();
-
         try {
             os.writeObject(new FileRequestRename(fileNameFromServerRename, newNameFile));
             os.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         fillServerData();
-
         textFieldServer.clear();
         hBoxTextFieldServer.setVisible(false);
         hBoxTextFieldServer.setPrefSize(0.0,0.0);
