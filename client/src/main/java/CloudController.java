@@ -1,9 +1,10 @@
 import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
 import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -30,7 +30,8 @@ public class CloudController implements Initializable {
     private File oldFile;
     private File newFile;
     private String fileNameFromServerRename;
-    private List<String> ls;
+
+    private Scene scene;
 
     @FXML
     public HBox hBoxTextField;
@@ -46,7 +47,6 @@ public class CloudController implements Initializable {
         String fileNameFromClient = clientListView.getSelectionModel().getSelectedItem();
         os.writeObject(new FileInfo(Paths.get(clientDir, fileNameFromClient)));
         os.flush();
-        fillServerData();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
@@ -54,63 +54,23 @@ public class CloudController implements Initializable {
         os.writeObject(new FileRequest(fileNameFromServer));
         os.flush();
         // TODO: threadRead
-        try {
-            FileInfo fileInfo = (FileInfo) is.readObject();
-            if (fileInfo.getFileType().toString() == "FILE") {
-                Files.write(Paths.get(clientDir, fileInfo.getFileName()),
-                        fileInfo.getData(),
-                        StandardOpenOption.CREATE);
-            } else {
-                LOG.info("");
-//                для передачи папки
-//                Files.createDirectories(Paths.get(clientDir, fileInfo.getFileName()));
-            }
-        } catch(ClassNotFoundException e){
-                e.printStackTrace();
-                throw new RuntimeException("File not found on server");
-            }
-
-        fillClientData();
     }
 
-
-    private void fillServerData() {
-        try {
-            serverListView.getItems().clear();
-            serverListView.getItems().addAll(getServerFiles());
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Can not fill server files");
-        }
-    }
-
-    private void fillClientData() {
+    private void fillClientViews() {
         try {
             clientListView.getItems().clear();
-            clientListView.getItems().addAll(getClientFiles());
+            clientListView.getItems().addAll(Files.list(Paths.get(clientDir))
+                    .map(path -> path.getFileName().toString())
+                    .collect(Collectors.toList()));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Can not fill client files");
         }
     }
 
-    private List<String> getServerFiles() throws IOException, ClassNotFoundException {
-        os.writeObject(new ListRequest());
-        os.flush();
-
-        // TODO: threadRead
-        ListFilesServer lf = (ListFilesServer) is.readObject();
-        return lf.getFiles();
-
-//        LOG.info("getServerFiles get files {}", ls.toString());
-//        return ls;
-    }
-
-    private List<String> getClientFiles() throws IOException {
-        Path clientDirPath = Paths.get(clientDir);
-        return Files.list(clientDirPath)
-                .map(path -> path.getFileName().toString())
-                .collect(Collectors.toList());
+    private void fillServerViews (List<String> list) {
+        serverListView.getItems().clear();
+        serverListView.getItems().addAll(list);
     }
 
     @Override
@@ -125,50 +85,55 @@ public class CloudController implements Initializable {
             os = new ObjectEncoderOutputStream(socket.getOutputStream());
             is = new ObjectDecoderInputStream(socket.getInputStream());
 
+            fillClientViews();
+            os.writeObject(new ListRequest());
+            os.flush();
 
-//          TODO: threadRead
+            Thread readThread = new Thread(()->{
+                while (true) {
+                    try {
+                        AbstractMassage massage = (AbstractMassage) is.readObject();
+                        Platform.runLater(() -> {
+                            try {
+                                process(massage);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            }
+                        });
 
-//            Thread readThread = new Thread(()->{
-//                while (true) {
-//                    try {
-//                        AbstractMassage massage = (AbstractMassage) is.readObject();
-//                        process(massage);
-//                    } catch (ClassNotFoundException | IOException e) {
-//                        e.printStackTrace();
-//                    }                 }
-//            });
-//            readThread.setDaemon(true);
-//            readThread.start();
-
-            fillClientData();
-            fillServerData();
+                    } catch (ClassNotFoundException | IOException e) {
+                        e.printStackTrace();
+                    }                 }
+            });
+            readThread.setDaemon(true);
+            readThread.start();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //          TODO: threadRead
+    private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
+        if (massage instanceof ListFilesServer){
+            ListFilesServer list = (ListFilesServer) massage;
+            LOG.info((((ListFilesServer)massage).getFiles()).toString());
+            fillServerViews(list.getFiles());
+                    }
+        if (massage instanceof FileInfo){
+            FileInfo fileInfo = (FileInfo) massage;
+            if (fileInfo.getFileType().toString() == "FILE") {
+                Files.write(Paths.get(clientDir, fileInfo.getFileName()),
+                        fileInfo.getData(),
+                        StandardOpenOption.CREATE);
 
-//    private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
-//        if (massage instanceof ListFilesServer){
-//            ls = ((ListFilesServer) massage).getFiles();
-//            LOG.info("Server send files {}", ls.toString());
-//            getServerFiles();
-//            fillServerData();
-//        }
-//        if (massage instanceof FileInfo){
-//            if (((FileInfo) massage).getFileType().toString() == "FILE") {
-//                Files.write(Paths.get(clientDir, ((FileInfo) massage).getFileName()),
-//                        ((FileInfo) massage).getData(),
-//                        StandardOpenOption.CREATE);
-//            } else {
-//                LOG.info("");
-//            }
-//            fillClientData();
-//        }
-//    }
-
+            } else {
+                LOG.info("");
+            }
+        }
+        fillClientViews();
+    }
 
     public void deleteFileInClient(ActionEvent actionEvent) {
         String fileNameFromClientDel = clientListView.getSelectionModel().getSelectedItem();
@@ -179,26 +144,17 @@ public class CloudController implements Initializable {
             e.printStackTrace();
             throw new RuntimeException("File not found on client directory");
         }
-        fillClientData();
+        fillClientViews();
     }
 
     public void deleteFileInCloud(ActionEvent actionEvent) {
         String fileNameFromServerDel = serverListView.getSelectionModel().getSelectedItem();
-
         try {
             os.writeObject(new FileRequestDelete(fileNameFromServerDel));
             os.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        try {
-            getServerFiles();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        fillServerData();
     }
 
     public void renameFileInClient(ActionEvent actionEvent) {
@@ -224,7 +180,7 @@ public class CloudController implements Initializable {
             LOG.info("Rename the oldFile to {}", newFile.getName());
         } else LOG.info("DIDN'T rename the oldFile to {}", newFile.getName());
 
-        fillClientData();
+        fillClientViews();
         textField.clear();
         hBoxTextField.setVisible(false);
         hBoxTextField.setPrefSize(0.0,0.0);
@@ -248,7 +204,6 @@ public class CloudController implements Initializable {
             e.printStackTrace();
         }
 
-        fillServerData();
         textFieldServer.clear();
         hBoxTextFieldServer.setVisible(false);
         hBoxTextFieldServer.setPrefSize(0.0,0.0);
