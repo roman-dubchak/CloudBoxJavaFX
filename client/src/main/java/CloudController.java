@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
@@ -34,6 +35,7 @@ public class CloudController implements Initializable {
     private String fileNameFromServerRename;
 
     private Scene scene;
+    private Stage stage;
 
     @FXML
     public HBox hBoxTextField;
@@ -46,10 +48,10 @@ public class CloudController implements Initializable {
 
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
         String fileNameFromClient = clientListView.getSelectionModel().getSelectedItem();
-        if (fileNameFromClient.contains("[DIR]")) return;
-        os.writeObject(new FileInfo(Paths.get(clientDir, fileNameFromClient)));
-        os.flush();
-        clientListView.requestFocus();
+//        if (fileNameFromClient.contains("[DIR]")) return;
+//        os.writeObject(new FileInfo(Paths.get(clientDir, fileNameFromClient)));
+//        os.flush();
+//        clientListView.requestFocus();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
@@ -151,14 +153,16 @@ public class CloudController implements Initializable {
             ListFilesServer list = (ListFilesServer) massage;
             LOG.info((((ListFilesServer)massage).getFiles()).toString());
             fillServerViews(list.getFiles());
-                    }
+        } else
+
+            // TODO FILEINFO isFinish
+
         if (massage instanceof FileInfo){
             FileInfo fileInfo = (FileInfo) massage;
             if (fileInfo.getFileType().toString() == "FILE") {
                 Files.write(Paths.get(clientDir, fileInfo.getFileName()),
                         fileInfo.getData(),
                         StandardOpenOption.CREATE);
-
             } else {
                 LOG.info("");
             }

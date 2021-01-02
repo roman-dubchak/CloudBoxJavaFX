@@ -21,9 +21,13 @@ public class FileInfo extends AbstractMassage {
         }
     }
 
-    private String fileName;
-    private byte [] data;
-    private int num;
+    private final String fileName;
+    private final byte [] data;
+    private final int num;
+
+
+
+    private boolean finish;
     private FileType fileType;
     private Long fileSize;
     private LocalDateTime lastModified;
@@ -44,26 +48,44 @@ public class FileInfo extends AbstractMassage {
         return fileType;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+//    public void setFileName(String fileName) {
+//        this.fileName = fileName;
+//    }
+
+    public int getNum() {
+        return num;
     }
 
-    public FileInfo(Path path) {
-        try {
-            this.fileName = path.getFileName().toString();
-            this.data = Files.readAllBytes(path); // продумать для больших файлов
-            this.fileSize = Files.size(path);
-            this.fileType = Files.isDirectory(path) ? FileType.DIRECTORY : FileType.FILE;
-            if (this.fileType == FileType.DIRECTORY){
-                this.fileSize = -1L;
-            }
-            this.lastModified = LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(),
-                                ZoneOffset.ofHours(0));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Unable to create file info from path");
-        }
+    public boolean isFinish() {
+        return finish;
     }
+
+    public void setFinish() {
+        finish = true;
+    }
+
+    public FileInfo(String fileName, byte[] data, int num) {
+        this.fileName = fileName;
+        this.data = data;
+        this.num = num;
+    }
+
+//    public FileInfo(Path path) {
+//        try {
+//            this.fileName = path.getFileName().toString();
+//            this.data = Files.readAllBytes(path); // продумать для больших файлов
+//            this.fileSize = Files.size(path);
+//            this.fileType = Files.isDirectory(path) ? FileType.DIRECTORY : FileType.FILE;
+//            if (this.fileType == FileType.DIRECTORY){
+//                this.fileSize = -1L;
+//            }
+//            this.lastModified = LocalDateTime.ofInstant(Files.getLastModifiedTime(path).toInstant(),
+//                                ZoneOffset.ofHours(0));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Unable to create file info from path");
+//        }
+//    }
 
     @Override
     public String toString() {
