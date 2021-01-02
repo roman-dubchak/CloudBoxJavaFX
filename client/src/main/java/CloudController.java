@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class CloudController implements Initializable {
     private static final Logger LOG = LoggerFactory.getLogger(CloudController.class);
     private String clientDir = "client/clientDir";
+    private Path clientPath;
 
     private ObjectEncoderOutputStream os;
     private ObjectDecoderInputStream is;
@@ -62,7 +64,7 @@ public class CloudController implements Initializable {
     private void fillClientViews() {
         try {
             clientListView.getItems().clear();
-            clientListView.getItems().addAll(Files.list(Paths.get(clientDir))
+            clientListView.getItems().addAll(Files.list(clientPath)
                     .map(path ->{
                         if (Files.isDirectory(path)){
                             return "[DIR]" + path.getFileName().toString();
@@ -81,6 +83,7 @@ public class CloudController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        clientPath = Paths.get(clientDir);
         hBoxTextField.setVisible(false);
         hBoxTextField.setPrefSize(0.0,0.0);
         hBoxTextFieldServer.setVisible(false);
@@ -94,6 +97,27 @@ public class CloudController implements Initializable {
             fillClientViews();
             os.writeObject(new ListRequest());
             os.flush();
+
+            serverListView.setOnMouseClicked(click -> {
+                if (click.getClickCount() == 2){
+                    String dir = serverListView.getSelectionModel().getSelectedItem();
+
+                    try {
+                        os.writeObject(new MoveRequest(dir.replace("[DIR]","")));
+                        os.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            clientListView.setOnMouseClicked(click -> {
+                if (click.getClickCount() == 2){
+                    String dir = clientListView.getSelectionModel().getSelectedItem();
+                    clientPath = clientPath.resolve(dir.replace("[DIR]", ""));
+                    fillClientViews();
+                }
+            });
 
             Thread readThread = new Thread(()->{
                 while (true) {

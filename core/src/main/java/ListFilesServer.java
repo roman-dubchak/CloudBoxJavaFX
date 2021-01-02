@@ -9,12 +9,14 @@ public class ListFilesServer extends AbstractMassage{
     private final List<String> files;
 
     public ListFilesServer(Path path) throws IOException {
-        this.files = Files.list(path).
-                map(p ->{
-            if (Files.isDirectory(p)){
-                return "[DIR]" + p.getFileName().toString();
-            } else return p.getFileName().toString();
-            }).collect(Collectors.toList());
+        this.files = Files.list(path)
+                .map(p ->{
+                    if (Files.isDirectory(p)){
+                        return "[DIR]" + p.getFileName().toString();
+                    } else
+                        return p.getFileName().toString();
+                })
+                .collect(Collectors.toList());
     }
 
     public List<String> getFiles() {

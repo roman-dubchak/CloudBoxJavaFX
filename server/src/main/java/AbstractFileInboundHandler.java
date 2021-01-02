@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<AbstractMassage> {
     private final static Logger LOG = LoggerFactory.getLogger(AbstractFileInboundHandler.class);
     private String serverDir = "server/serverFiles";
-    Path serverPath;
+    private Path serverPath;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -24,6 +24,13 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
     protected void channelRead0(ChannelHandlerContext ctx, AbstractMassage massage) throws Exception {
         LOG.info("File info: {}", massage);
         if(massage instanceof ListRequest){
+            ctx.writeAndFlush(new ListFilesServer(serverPath));
+        }
+
+        if (massage instanceof MoveRequest){
+            MoveRequest moveRequest = (MoveRequest) massage;
+            serverPath = serverPath.resolve(moveRequest.getDir());
+            LOG.info("Move in folder {}", moveRequest.getDir());
             ctx.writeAndFlush(new ListFilesServer(serverPath));
         }
 
@@ -52,6 +59,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
             LOG.info("Client to delete the file {}", massage);
             ctx.writeAndFlush(new ListFilesServer(serverPath));
         }
+
         if(massage instanceof FileRequestRename){
             Files.move((Paths.get(serverDir, ((FileRequestRename)massage).getOldFileName())),
                     (Paths.get(serverDir, ((FileRequestRename)massage).getNewFileName())));
