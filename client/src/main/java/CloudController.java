@@ -44,7 +44,6 @@ public class CloudController implements Initializable {
     public ListView<String> clientListView;
     public ListView<String> serverListView; // заменить на ViewTables
 
-
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
         String fileNameFromClient = clientListView.getSelectionModel().getSelectedItem();
         if (fileNameFromClient.contains("[DIR]")) return;
@@ -243,4 +242,20 @@ public class CloudController implements Initializable {
         hBoxTextFieldServer.setPrefSize(0.0,0.0);
         serverListView.requestFocus();
     }
+
+    public void upInFolderClient(ActionEvent actionEvent) {
+        clientPath = clientPath.getParent();
+        fillClientViews();
+    }
+
+    public void upInFolderCloud(ActionEvent actionEvent) {
+
+        try {
+            os.writeObject(new MoveUpFolder());
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

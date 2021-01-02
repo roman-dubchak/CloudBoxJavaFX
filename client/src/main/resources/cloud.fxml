@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="480.0" prefHeight="600.0"
+<VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="620.0" prefHeight="600.0"
       prefWidth="480.0" xmlns="http://javafx.com/javafx/8.0.202" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CloudController">
       <MenuBar prefHeight="25.0" prefWidth="480.0">
         <menus>
@@ -58,7 +58,12 @@
                   <Font size="12.0" />
                </font>
             </Button>
-               <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#download" prefHeight="40.0" prefWidth="125.0" text="Download">
+            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#upInFolderClient" prefHeight="40.0" prefWidth="125.0" text="Up folder">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#download" prefHeight="40.0" prefWidth="125.0" text="Download">
                <font>
                   <Font size="12.0" />
                </font>
@@ -69,6 +74,11 @@
                </font>
             </Button>
             <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#deleteFileInCloud" prefHeight="40.0" prefWidth="125.0" text="Delete">
+               <font>
+                  <Font size="12.0" />
+               </font>
+            </Button>
+            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#upInFolderCloud" prefHeight="40.0" prefWidth="125.0" text="Up folder">
                <font>
                   <Font size="12.0" />
                </font>

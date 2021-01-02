@@ -28,9 +28,19 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
         }
 
         if (massage instanceof MoveRequest){
+            // TODO
+//            if (Files.isDirectory(Paths.get(MoveRequest)massage)){}
             MoveRequest moveRequest = (MoveRequest) massage;
             serverPath = serverPath.resolve(moveRequest.getDir());
             LOG.info("Move in folder {}", moveRequest.getDir());
+            ctx.writeAndFlush(new ListFilesServer(serverPath));
+        }
+
+        if (massage instanceof MoveUpFolder){
+            // TODO
+//            if (Files.isDirectory(Paths.get(MoveRequest)massage)){}
+            serverPath = serverPath.getParent();
+            LOG.info("Move up the folder {}", serverPath.toString());
             ctx.writeAndFlush(new ListFilesServer(serverPath));
         }
 
