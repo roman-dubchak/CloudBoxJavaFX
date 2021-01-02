@@ -23,6 +23,7 @@ public class FileInfo extends AbstractMassage {
 
     private String fileName;
     private byte [] data;
+    private int num;
     private FileType fileType;
     private Long fileSize;
     private LocalDateTime lastModified;

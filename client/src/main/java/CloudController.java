@@ -45,23 +45,29 @@ public class CloudController implements Initializable {
 
     public void uploadInCloud(ActionEvent actionEvent) throws IOException {
         String fileNameFromClient = clientListView.getSelectionModel().getSelectedItem();
+        if (fileNameFromClient.contains("[DIR]")) return;
         os.writeObject(new FileInfo(Paths.get(clientDir, fileNameFromClient)));
         os.flush();
+        clientListView.requestFocus();
     }
 
     public void download(ActionEvent actionEvent) throws IOException {
         String fileNameFromServer = serverListView.getSelectionModel().getSelectedItem();
+        if (fileNameFromServer.contains("[DIR]")) return;
         os.writeObject(new FileRequest(fileNameFromServer));
         os.flush();
-        // TODO: threadRead
+        serverListView.requestFocus();
     }
 
     private void fillClientViews() {
         try {
             clientListView.getItems().clear();
             clientListView.getItems().addAll(Files.list(Paths.get(clientDir))
-                    .map(path -> path.getFileName().toString())
-                    .collect(Collectors.toList()));
+                    .map(path ->{
+                        if (Files.isDirectory(path)){
+                            return "[DIR]" + path.getFileName().toString();
+                        } else return path.getFileName().toString();
+                    }).collect(Collectors.toList()));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Can not fill client files");
@@ -115,6 +121,8 @@ public class CloudController implements Initializable {
         }
     }
 
+    // TODO: [DIR]
+
     private void process(AbstractMassage massage) throws IOException, ClassNotFoundException {
         if (massage instanceof ListFilesServer){
             ListFilesServer list = (ListFilesServer) massage;
@@ -149,6 +157,7 @@ public class CloudController implements Initializable {
 
     public void deleteFileInCloud(ActionEvent actionEvent) {
         String fileNameFromServerDel = serverListView.getSelectionModel().getSelectedItem();
+        serverListView.requestFocus();
         try {
             os.writeObject(new FileRequestDelete(fileNameFromServerDel));
             os.flush();
@@ -159,7 +168,6 @@ public class CloudController implements Initializable {
 
     public void renameFileInClient(ActionEvent actionEvent) {
         String fileNameFromClientRename = clientListView.getSelectionModel().getSelectedItem();
-
         hBoxTextField.setVisible(true);
         hBoxTextField.setPrefSize(450.0,40.0);
         textField.requestFocus();
@@ -168,6 +176,8 @@ public class CloudController implements Initializable {
         LOG.info("Try rename file {}", oldFile.getName());
 
     }
+
+    // TODO: POPUP WINDOW
 
     public void renamePopup(ActionEvent actionEvent) {
         String newNameFile = textField.getText();

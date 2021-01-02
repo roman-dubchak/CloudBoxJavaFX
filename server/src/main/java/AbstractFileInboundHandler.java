@@ -13,12 +13,18 @@ import java.util.stream.Collectors;
 public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<AbstractMassage> {
     private final static Logger LOG = LoggerFactory.getLogger(AbstractFileInboundHandler.class);
     private String serverDir = "server/serverFiles";
+    Path serverPath;
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        serverPath = Paths.get(serverDir);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AbstractMassage massage) throws Exception {
         LOG.info("File info: {}", massage);
         if(massage instanceof ListRequest){
-            ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
+            ctx.writeAndFlush(new ListFilesServer(serverPath));
         }
 
         if (massage instanceof FileInfo){
@@ -29,7 +35,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
                 Files.write(Paths.get(serverDir, fileInfo.getFileName()),
                         fileInfo.getData(),
                         StandardOpenOption.CREATE);
-                ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
+                ctx.writeAndFlush(new ListFilesServer(serverPath));
                 LOG.info("Server successfully received file: {}", fileInfo);
             }
             LOG.info("Client tries to upload a folder {}", fileInfo.getFileName(), fileInfo.getFileType());
@@ -44,7 +50,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
         if(massage instanceof FileRequestDelete){
             Files.delete(Paths.get(serverDir,((FileRequestDelete) massage).getFileName()));
             LOG.info("Client to delete the file {}", massage);
-            ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
+            ctx.writeAndFlush(new ListFilesServer(serverPath));
         }
         if(massage instanceof FileRequestRename){
             Files.move((Paths.get(serverDir, ((FileRequestRename)massage).getOldFileName())),
@@ -53,7 +59,7 @@ public class AbstractFileInboundHandler extends SimpleChannelInboundHandler<Abst
             LOG.info("Client rename file the file {}",
                     ((FileRequestRename) massage).getOldFileName(),
                     ((FileRequestRename) massage).getNewFileName());
-            ctx.writeAndFlush(new ListFilesServer(getServerFiles()));
+            ctx.writeAndFlush(new ListFilesServer(serverPath));
         }
     }
 
